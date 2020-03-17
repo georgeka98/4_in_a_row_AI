@@ -6,7 +6,7 @@ class board:
     
   def __init__(self, human):
 
-    self.end = False
+    self.game_end = False
     self.human = human
     self.ai = "O" if human == "X" else "X"
     self.players = ["X", "O"]
@@ -31,7 +31,7 @@ class board:
           if self.board[row][col] != i:
             break
           if col == len(self.board[row])-1:
-            self.end = True
+            self.game_end = True
             return True
       
       # Horizontal win --
@@ -40,7 +40,7 @@ class board:
           if self.board[col][row] != i:
             break
           if col == len(self.board)-1:
-            self.end = True
+            self.game_end = True
             return True
       
       # diagnonal win (top left to bottom right) \
@@ -48,7 +48,7 @@ class board:
         if self.board[row][row] != i:
           break
         if row == len(self.board)-1:
-          self.end = True
+          self.game_end = True
           return True
 
       # diagnonal win (bottom left to top right) /
@@ -56,7 +56,7 @@ class board:
         if self.board[row][len(self.board) - 1 - row] != i:
           break
         if row == len(self.board)-1:
-          self.end = True
+          self.game_end = True
           return True
 
     return False
@@ -68,30 +68,52 @@ class board:
         if self.board[row][col] == "_" or self.board[row][col] == "-":
           return False
 
-    self.end = True
+    self.game_end = True
     return True
 
   def insert(self, row, col, player):
 
     if self.board[row][col] == "_":
       self.board[row][col] = player
-      self.board[row+1][col] = "_"
+
+      if row+1 < len(self.board):
+        self.board[row+1][col] = "_"
 
   def play(self):
 
     if self.human == "X":
       self.human_move()
+
+      if self.game_end:
+        self.print_board()
+        return 0
+
       self.ai_move()
 
     else:
       self.ai_move()
+
+      if self.game_end:
+        self.print_board()
+        return 0
+
       self.human_move()
 
-    self.play()
+    if not self.game_end:
+      self.play()
+
   
   def human_move(self):
 
-    return 0
+    self.print_board()
+
+    row = int(input("choose row ... "))
+    col = int(input("choose col ... "))
+
+    if self.board[row][col] == "_":
+      self.insert(row, col, self.human)
+
+    self.has_won()
 
   def ai_move(self):
 
@@ -104,13 +126,13 @@ class board:
 
     coords = random.choice(positions)
 
-    self.insert(self, coords[0], coords[1], self.ai)
+    self.insert(coords[0], coords[1], self.ai)
+
+    self.has_won()
 
 
 
 play_as = input("Choose X or O ... ")
 game = board(play_as)
-game.print_board()
-game.insert(0,0,"X")
-game.print_board()
+game.play()
           
