@@ -152,7 +152,9 @@ class board:
     positions = self.positions_available()
     score = self.minimax(positions, 1, -inf, inf, True)
 
-    print(score)
+    print("maximizer score: ", score)
+    print("evaluations: ",self.evaluations)
+    self.evaluations = 0
     # print(self.ai_best_pos)
     # print(self.ai_positions)
 
